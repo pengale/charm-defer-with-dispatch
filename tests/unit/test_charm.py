@@ -25,4 +25,4 @@ class TestCharm(unittest.TestCase):
 
         # Simulate second run.
         self.harness.charm.on.config_changed.emit()
-        self.assertEqual(self.harness.model.unit.status, ActiveStatus("Run"))
+        self.assertEqual(self.harness.model.unit.status, ActiveStatus())

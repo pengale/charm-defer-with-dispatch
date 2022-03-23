@@ -18,6 +18,7 @@ This library adds helpers to defer an event, then wake Juju up.
 
 """
 import logging
+import os
 import subprocess
 
 from ops.charm import CharmBase
@@ -37,7 +38,7 @@ LIBPATCH = 1
 
 
 CMD = """\
-sleep 1
+sleep {delay};
 juju-run JUJU_DISPATCH_PATH=hooks/local_wake ./dispatch
 """
 
@@ -58,5 +59,13 @@ class AddDispatch:
         charm.on.define_event("local_wake", LocalWake)  # Register a no-op event.
 
     def __call__(self, event):
-        subprocess.Popen(CMD, shell=True)
         event.defer()
+        env = dict(**os.environ)
+        delay = 1
+        try:
+            env.pop('JUJU_CONTEXT_ID')
+        except KeyError:
+            # This mainly happens in the testing harness.
+            pass
+        event.framework.breakpoint()
+        subprocess.Popen(CMD.format(delay=delay), shell=True, env=env)

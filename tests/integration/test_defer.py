@@ -33,4 +33,3 @@ async def test_smoke(ops_test: OpsTest):
     await ops_test.model.block_until(lambda: app.status in ("active", "error"))
 
     assert app.status, "active"
-    assert unit0.workload_status_message == "Run"

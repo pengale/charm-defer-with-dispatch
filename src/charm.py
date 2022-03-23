@@ -35,15 +35,12 @@ class DeferWithDispatchCharm(CharmBase):
         self.framework.observe(self.on.config_changed, self._on_config_changed)
 
     def _on_config_changed(self, event):
-        deferred = MaintenanceStatus("Deferred")
-        active = ActiveStatus("Run")
-
-        if self.model.unit.status not in (deferred, active):
+        if self.model.unit.status != MaintenanceStatus("Deferred"):
             self.defer_with_dispatch(event)
             self.model.unit.status = MaintenanceStatus("Deferred")
             return
 
-        self.model.unit.status = active
+        self.model.unit.status = ActiveStatus()
 
 
 if __name__ == "__main__":
